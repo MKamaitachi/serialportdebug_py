@@ -1,4 +1,5 @@
 
+
 #from curses import baudrate
 #from hmac import compare_digest
 from tkinter import *
@@ -167,23 +168,6 @@ class Win:
         btn.place(x=500, y=190, width=80, height=24)
         return btn
 
-    '''
-    def __tk_button_receive_button(self):
-        btn = Button(self.root,text="Receive",command=self.receive_data)
-        btn.place(x=30,y=330,width=121,height=24)
-        return btn
-    
-    def __tk_button_stop_rec_button(self):
-        btn = Button(self.root,text="Stop_rec",command=self.reset_flag)
-        btn.place(x=30,y=370,width=121,height=24)
-        return btn
-    '''
-
-    
-    '''
-    def message(self):
-        tkinter.messagebox.showinfo(title="Oops!",message="请输入一个字符！")
-    '''
     def run(self):
         self.thread_flag = 1
         com_r = self.tk_select_box_port_m.get()       #com_r = self.__tk_select_box_port_m,则com_r为函数
@@ -213,9 +197,12 @@ class Win:
         databit_r = self.decode_dict[databit_r]
         stopbit_r = self.tk_select_box_stopbit_m.get()
         stopbit_r = self.decode_dict[stopbit_r]
-        self.serial_port = serial.Serial(com_r,baudrate=temp,parity=parity_r,bytesize=databit_r,stopbits=stopbit_r,timeout=2)
-        self.tk_text_log_box.insert(END,"\n串口已打开\n")
-        self.start_thread()
+        try:
+            self.serial_port = serial.Serial(com_r,baudrate=temp,parity=parity_r,bytesize=databit_r,stopbits=stopbit_r,timeout=2)
+            self.tk_text_log_box.insert(END,"\n串口已打开\n")
+            self.start_thread()
+        except serial.serialutil.SerialException:
+            self.tk_text_log_box.insert(END,"\n串口已被占用\n")
 
     
     def stop(self):
@@ -230,13 +217,6 @@ class Win:
 
     def clear(self):
         self.tk_text_log_box.delete(1.0,END)
-    '''
-    def record_send(self):                                   合并到send函数中
-        #send_str = str(self.i) + '\n'
-        send_str = self.time_str + " send :"
-        self.tk_text_log_box.insert(END,send_str,'send_tag')
-        #self.i = self.i + 1
-    '''
     
     def send(self):
         if self.serial_port:
@@ -253,19 +233,6 @@ class Win:
 
     
     def receive_data(self):
-        '''
-        if self.serial_port:
-            while(True):
-                try:
-                    receive_str = self.serial_port.read()
-                    receive_str = receive_str.decode("utf-8")
-                    print(receive_str)
-                    self.tk_text_log_box.insert(END,receive_str)
-                except:
-                    pass
-        else:
-            time.sleep(10)
-        '''
         try:
             while(True):
                 if self.serial_port and self.serial_port.in_waiting:
@@ -300,7 +267,6 @@ class Win:
         except OSError:
             pass
     '''
-    
     
 
 if __name__ == "__main__":
