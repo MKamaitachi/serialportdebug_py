@@ -1,7 +1,7 @@
 # serialportdebug_py
-A serial debug software with GUI
+可用于收发的串口调试软件
 
-## 安装依赖
+# 安装依赖
 pip install tkinter
 
 pip install serial
