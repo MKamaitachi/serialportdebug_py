@@ -1,6 +1,3 @@
-
-#from curses import baudrate
-#from hmac import compare_digest
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import scrolledtext
