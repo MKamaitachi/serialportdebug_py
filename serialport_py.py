@@ -1,5 +1,4 @@
 
-
 #from curses import baudrate
 #from hmac import compare_digest
 from tkinter import *
@@ -14,6 +13,7 @@ import threading
 class Win:
     
     i = 1
+    status = 0
     decode_dict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9}
     port_tupple = tuple(serial.tools.list_ports.comports())
     baud_tupple = ('9600','19200','38400','57600','115200')
@@ -45,8 +45,6 @@ class Win:
         self.tk_button_run_button = self.__tk_button_run_button()
         self.tk_button_stop_button = self.__tk_button_stop_button()
         self.tk_button_clear_button = self.__tk_button_clear_button()
-        #self.tk_button_receive_button = self.__tk_button_receive_button()
-        #self.tk_button_stop_rec_button = self.__tk_button_stop_rec_button()
 
     def __win(self):
         root = Tk()
@@ -170,19 +168,16 @@ class Win:
 
     def run(self):
         self.thread_flag = 1
+        self.status = 1
         com_r = self.tk_select_box_port_m.get()       #com_r = self.__tk_select_box_port_m,则com_r为函数
         com_r = com_r[0:4]                               #com_r = self.__tk_select_box_port_m()，则com_r为函数返回值
-        #print(com_r)
 
         baudrate_r = self.tk_select_box_baud_m.get()
-        #print(type(baudrate_r))
         j = 1
         temp = 0
         for _ in reversed(baudrate_r):                    #将波特率字符串转为10进制值
             temp = self.decode_dict[_] * j + temp
             j = j * 10
-        #print(temp)
-        
         parity_r = self.tk_select_box_checkbit_m.get()
         if parity_r == "None":
             parity_r = "N"
@@ -192,25 +187,24 @@ class Win:
             parity_r = "O"
         
         databit_r = self.tk_select_box_databit_m.get()
-        #print(databit_r)
-        #print(type(databit_r))
         databit_r = self.decode_dict[databit_r]
         stopbit_r = self.tk_select_box_stopbit_m.get()
         stopbit_r = self.decode_dict[stopbit_r]
-        try:
-            self.serial_port = serial.Serial(com_r,baudrate=temp,parity=parity_r,bytesize=databit_r,stopbits=stopbit_r,timeout=2)
-            self.tk_text_log_box.insert(END,"\n串口已打开\n")
-            self.start_thread()
-        except serial.serialutil.SerialException:
-            self.tk_text_log_box.insert(END,"\n串口已被占用\n")
+        #try:
+        self.serial_port = serial.Serial(com_r,baudrate=temp,parity=parity_r,bytesize=databit_r,stopbits=stopbit_r,timeout=2)
+        self.tk_text_log_box.insert(END,"\n串口已打开\n")
+        self.start_thread()
+        #except serial.serialutil.SerialException:
+            #self.tk_text_log_box.insert(END,"\n串口已被占用\n")
 
     
     def stop(self):
         if self.serial_port:
             #print("准备关闭线程！")
-            #self.stop_thread()
+            self.stop_thread()
             #print("aiguo")
             self.serial_port.close()
+            self.status = 0
             self.tk_text_log_box.insert(END,"\n串口已关闭\n")
         else:
             self.tk_text_log_box.insert(END,"串口未打开\n")
@@ -219,7 +213,7 @@ class Win:
         self.tk_text_log_box.delete(1.0,END)
     
     def send(self):
-        if self.serial_port:
+        if self.status:
             #self.serial_port.flush()
             text = self.tk_input_send_box.get()
             self.serial_port.write(text.encode("utf-8"))
@@ -255,18 +249,18 @@ class Win:
             print("线程启动！")
         #return ReceiveUartThread
     
-    '''
+    
     def stop_thread(self):
         try:
             if self.thread_flag:
-                self.ReceiveUartThread.join(10)
+                self.ReceiveUartThread.join(1)         #注意：join的参数为timeout，此参数不能为空，否则关闭线程会卡死python
                 print("线程关闭")
                 self.thread_flag = 0
             else:
                 self.tk_text_log_box.insert(END,"线程未启动。\n")
         except OSError:
             pass
-    '''
+    
     
 
 if __name__ == "__main__":
