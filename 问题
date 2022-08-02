@@ -1,2 +1,3 @@
 # 待修复问题
 1、关闭串口后再重新打开会导致serial.serialutil.SerialException。（可能原因：未关闭接收线程）
+   status：已修复，更改以抛出异常的方式打开串口。
