@@ -204,20 +204,22 @@ class Win:
             self.status = 0
             self.tk_text_log_box.insert(END,"\n串口已关闭\n")
         else:
-            self.tk_text_log_box.insert(END,"串口未打开\n")
+            self.tk_text_log_box.insert(END,"\n串口未打开\n")
 
     def clear(self):
         self.tk_text_log_box.delete(1.0,END)
     
     def send(self):
         if self.status:
-            #self.serial_port.flush()
             text = self.tk_input_send_box.get()
-            self.serial_port.write(text.encode("utf-8"))
-            send_str = str(self.time_str) + " send :" + text + '\n'          #记录发送内容
-            self.tk_text_log_box.insert(END,send_str,'send_tag')
+            if text:
+                self.serial_port.write(text.encode("utf-8"))
+                send_str = str(self.time_str) + " send :" + text + '\n'          #记录发送内容
+                self.tk_text_log_box.insert(END,send_str,'send_tag')
+            else:
+                self.tk_text_log_box.insert(END,"\n发送内容不能为空\n")
         else:
-            self.tk_text_log_box.insert(END,"串口未打开\n")
+            self.tk_text_log_box.insert(END,"\n串口未打开\n")
     
     def sendinhex(self):
         pass
