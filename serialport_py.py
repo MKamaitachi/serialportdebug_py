@@ -165,7 +165,6 @@ class Win:
 
     def run(self):
         self.thread_flag = 1
-        self.status = 1
         com_r = self.tk_select_box_port_m.get()       #com_r = self.__tk_select_box_port_m,则com_r为函数
         com_r = com_r[0:4]                               #com_r = self.__tk_select_box_port_m()，则com_r为函数返回值
 
@@ -191,6 +190,7 @@ class Win:
         self.serial_port = serial.Serial(com_r,baudrate=temp,parity=parity_r,bytesize=databit_r,stopbits=stopbit_r,timeout=2)
         self.tk_text_log_box.insert(END,"\n串口已打开\n")
         self.start_thread()
+        self.status = 1                              #串口的状态位需在开启串口后方可置1（表示串口已打开）
         #except serial.serialutil.SerialException:
             #self.tk_text_log_box.insert(END,"\n串口已被占用\n")
 
