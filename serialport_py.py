@@ -3,7 +3,7 @@ from tkinter.ttk import *
 from tkinter import scrolledtext
 import serial
 import serial.tools.list_ports
-import datetime,time
+import time
 import threading
 #import tkinter.messagebox
 
@@ -18,7 +18,6 @@ class Win:
     checkbit_tupple = ('None','奇校验','偶校验')
     stopbit_tupple = ('1','2')
     serial_port = ''
-    time_str = datetime.datetime.now()
     thread_flag = 0
 
     def __init__(self):
@@ -214,7 +213,7 @@ class Win:
             text = self.tk_input_send_box.get()
             if text:
                 self.serial_port.write(text.encode("utf-8"))
-                send_str = str(self.time_str) + " send :" + text + '\n'          #记录发送内容
+                send_str = time.asctime(time.localtime(time.time())) + " send :" + text + '\n'          #记录发送内容
                 self.tk_text_log_box.insert(END,send_str,'send_tag')
             else:
                 self.tk_text_log_box.insert(END,"\n发送内容不能为空\n")
@@ -231,7 +230,7 @@ class Win:
                 if self.serial_port and self.serial_port.in_waiting:
                     text = self.serial_port.read(self.serial_port.in_waiting)
                     #print("Receive thread is working.")
-                    receive_str = str(self.time_str) + " receive:" + text.decode('utf-8') + '\n'
+                    receive_str = time.asctime(time.localtime(time.time())) + " receive:" + text.decode('utf-8') + '\n'
                     self.tk_text_log_box.insert(END,receive_str,'receive_tag')
                 #else:
                     #print("串口未打开或无数据接收\n")
